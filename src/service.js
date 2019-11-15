@@ -5,3 +5,4 @@ const instance = axios.create({
 });
 
 export const getClients = () => instance.get(`/clients`);
+export const postClients = data => instance.post(`/clients`, data);
