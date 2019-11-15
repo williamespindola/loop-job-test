@@ -10,13 +10,13 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name=":vendor Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Loop Client Test Suite">
+            <directory>api/tests</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">src/</directory>
+            <directory suffix=".php">api/src/</directory>
         </whitelist>
     </filter>
     <logging>
