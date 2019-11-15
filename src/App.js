@@ -6,6 +6,7 @@ import {
   Form,
   Modal
 } from 'react-bootstrap';
+import MaskedFormControl from 'react-bootstrap-maskedinput';
 import {
   getClients,
   postClients
@@ -51,6 +52,15 @@ const App = () => {
 
   const closeModal = () => setModal(false);
 
+  const formatPhoneNumber = (str) => {
+    let cleaned = ('' + str).replace(/\D/g, '');
+    let match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
+    if (match) {
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+    };
+    return null
+  };
+
   return (
     <Container>
       <Jumbotron className="m-2">
@@ -76,7 +86,7 @@ const App = () => {
           {clientList.map(client => (
             <tr key={client.id}>
               <td>{client.name}</td>
-              <td>{client.phone}</td>
+              <td>{formatPhoneNumber(client.phone)}</td>
               <td>{client.birth_date}</td>
               <td>{client.address}</td>
               <td>
@@ -108,12 +118,13 @@ const App = () => {
             </Form.Group>
             <Form.Group controlId="userForm.Phone">
               <Form.Label>Telefone</Form.Label>
-              <Form.Control
+              <MaskedFormControl
                 name="phone"
                 type="text"
                 value={inputs.phone}
                 onChange={handleChange}
                 required
+                mask='(11) 11111-1111'
               />
             </Form.Group>
             <Form.Group controlId="userForm.BirthDate">
