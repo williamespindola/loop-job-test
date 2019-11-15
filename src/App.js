@@ -12,7 +12,7 @@ import {
 } from './service';
 
 const App = () => {
-  const [foo, setFoo] = React.useState();
+  const [clientList, setClientList] = React.useState([]);
   const [inputs, setInputs] = React.useState({
     name: '',
     phone: '',
@@ -22,7 +22,7 @@ const App = () => {
   const [modal, setModal] = React.useState(false);
 
   React.useEffect(() => {
-    getClients().then(response => setFoo(response.data.foo));
+    getClients().then(response => setClientList(response.data));
   }, []);
 
   const handleSubmit = event => {
@@ -62,7 +62,29 @@ const App = () => {
         </button>
       </Jumbotron>
 
-      <hr />
+      <table className="table-consume table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Telefone</th>
+            <th scope="col">Data de nascimento</th>
+            <th scope="col">Endereço</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientList.map(client => (
+            <tr key={client.id}>
+              <td>{client.name}</td>
+              <td>{client.phone}</td>
+              <td>{client.birth_date}</td>
+              <td>{client.address}</td>
+              <td>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <Modal
         show={modal}

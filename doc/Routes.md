@@ -22,3 +22,17 @@ Name            | Description
    "uuid": "1f41b7b6-355f-5530-a928-402754bea4f7"
 }
 ```
+
+## GET /clients
+
+Retorna uma lista de clientes
+
+### Response
+
+Array de clientes
+
+```json
+[
+    {...}
+]
+```

@@ -50,6 +50,7 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 ], $config);
 $connection->getWrappedConnection()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
+$app->get('/clients', new GetClients($connection));
 $app->post('/clients', new PostClients($connection));
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
