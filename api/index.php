@@ -17,6 +17,7 @@ use Slim\Factory\AppFactory;
 use Loop\Client\Http\Action\GetClients;
 use Loop\Client\Http\Action\PostClients;
 use Loop\Client\Http\Action\PutClients;
+use Loop\Client\Http\Action\DeleteClients;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -54,6 +55,7 @@ $connection->getWrappedConnection()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, f
 $app->get('/clients', new GetClients($connection));
 $app->post('/clients', new PostClients($connection));
 $app->put('/clients/{uuid}', new PutClients($connection));
+$app->delete('/clients/{uuid}', new DeleteClients($connection));
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;

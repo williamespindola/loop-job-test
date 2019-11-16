@@ -57,6 +57,6 @@ final class PostClients
             throw new HttpBadRequestException($request, $exception->getMessage());
         }
 
-        return $this->responseAsJson($response, ['uuid' => $uuid5->toString()], 200);
+        return $this->responseAsJson($response, ['uuid' => $uuid5->toString()], 201);
     }
 }

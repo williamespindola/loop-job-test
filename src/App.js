@@ -10,7 +10,8 @@ import MaskedFormControl from 'react-bootstrap-maskedinput';
 import {
   getClients,
   postClients,
-  putClients
+  putClients,
+  deleteClients
 } from './service';
 
 const App = () => {
@@ -81,7 +82,16 @@ const App = () => {
     setInputs(client);
     setEditing(true);
     toggleModal(true)
-  }
+  };
+
+  const deleteClient = (uuid, name) => {
+    if (window.confirm(`Deseja realmente excluir o usuário ${name}?`)) {
+      deleteClients(uuid).then(response => {
+        alert('Cliente excluído com sucesso');
+        getClients().then(response => setClientList(response.data));
+      });
+    }
+  };
 
   return (
     <Container>
@@ -112,9 +122,13 @@ const App = () => {
               <td>{client.birth_date}</td>
               <td>{client.address}</td>
               <td>
-                <button className="btn btn-primary"
+                <button className="btn btn-primary btn-sm mx-2"
                   onClick={() => editClient(client)}>
                   Editar cliente
+                </button>
+                <button className="btn btn-danger btn-sm mx-2"
+                  onClick={() => deleteClient(client.uuid, client.name)}>
+                  Excluir cliente
                 </button>
               </td>
             </tr>

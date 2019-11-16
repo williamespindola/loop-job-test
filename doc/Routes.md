@@ -60,3 +60,15 @@ Name            | Description
    "uuid": "1f41b7b6-355f-5530-a928-402754bea4f7"
 }
 ```
+
+## DELETE /clients/{uuid}
+
+### Request
+
+Name | Mandatory | Type | Default
+-- | -- | -- | --
+{uuid} | Yes | Uuid do cliente
+
+### Response
+Empty.
+
