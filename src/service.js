@@ -6,3 +6,5 @@ const instance = axios.create({
 
 export const getClients = () => instance.get(`/clients`);
 export const postClients = data => instance.post(`/clients`, data);
+export const putClients = (uuid, data) => instance.put(`/clients/${uuid}`, data);
+

@@ -24,7 +24,7 @@ final class GetClients
     {
         $clientList = $this->connection
                         ->createQueryBuilder()
-                        ->select('client.name, client.phone,
+                        ->select('client.uuid, client.name, client.phone,
                         date_format(client.birth_date, "%d/%m/%Y")as birth_date, client.address')
                         ->from('client')
                         ->execute()

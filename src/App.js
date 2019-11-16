@@ -9,18 +9,20 @@ import {
 import MaskedFormControl from 'react-bootstrap-maskedinput';
 import {
   getClients,
-  postClients
+  postClients,
+  putClients
 } from './service';
 
 const App = () => {
   const [clientList, setClientList] = React.useState([]);
+  const [editing, setEditing] = React.useState(false);
   const [inputs, setInputs] = React.useState({
     name: '',
     phone: '',
-    birth_data: '',
+    birth_date: '',
     address: ''
   });
-  const [modal, setModal] = React.useState(false);
+  const [modal, toggleModal] = React.useState(false);
 
   React.useEffect(() => {
     getClients().then(response => setClientList(response.data));
@@ -28,13 +30,30 @@ const App = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
+    if (editing) {
+      putClients(inputs.uuid, inputs).then(response => {
+        alert('Cliente editado com sucesso');
+        toggleModal(false);
+        setEditing(false);
+        setInputs({
+          name: '',
+          phone: '',
+          birth_date: '',
+          address: ''
+        });
+        getClients().then(response => setClientList(response.data));
+      });
+
+      return;
+    }
+
     postClients(inputs).then(response => {
       alert('Cliente cadastrado com sucesso');
-      setModal(false);
+      toggleModal(false);
       setInputs({
         name: '',
         phone: '',
-        birth_data: '',
+        birth_date: '',
         address: ''
       });
     });
@@ -48,10 +67,6 @@ const App = () => {
     }));
   };
 
-  const showModal = status => setModal(status);
-
-  const closeModal = () => setModal(false);
-
   const formatPhoneNumber = (str) => {
     let cleaned = ('' + str).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
@@ -61,13 +76,20 @@ const App = () => {
     return null
   };
 
+  const editClient = client => {
+    client.birth_date = client.birth_date.split('/').reverse().join('-');
+    setInputs(client);
+    setEditing(true);
+    toggleModal(true)
+  }
+
   return (
     <Container>
-      <Jumbotron className="m-2">
+      <Jumbotron className="my-2 py-4">
         <h1>Loop Client</h1>
         <br />
         <button className="btn btn-primary"
-          onClick={() => showModal(!modal)}>
+          onClick={() => toggleModal(!modal)}>
           Novo cliente
         </button>
       </Jumbotron>
@@ -84,12 +106,16 @@ const App = () => {
         </thead>
         <tbody>
           {clientList.map(client => (
-            <tr key={client.id}>
+            <tr key={client.uuid}>
               <td>{client.name}</td>
               <td>{formatPhoneNumber(client.phone)}</td>
               <td>{client.birth_date}</td>
               <td>{client.address}</td>
               <td>
+                <button className="btn btn-primary"
+                  onClick={() => editClient(client)}>
+                  Editar cliente
+                </button>
               </td>
             </tr>
           ))}
@@ -98,7 +124,7 @@ const App = () => {
 
       <Modal
         show={modal}
-        onHide={closeModal}
+        onHide={() => toggleModal(false)}
         backdrop="static"
       >
         <Modal.Header closeButton>
