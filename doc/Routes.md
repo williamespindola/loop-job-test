@@ -72,3 +72,34 @@ Name | Mandatory | Type | Default
 ### Response
 Empty.
 
+## GET /search-address/{cep}
+
+Pesquisa endereço usando o CEP
+
+### Request
+
+Name | Mandatory | Type | Default
+-- | -- | -- | --
+{cep} | Yes | string CEP inserido pelo usuário
+
+### Response
+
+Status 200 para CEP encontrado
+
+```json
+{
+    "address": "Rua Bela Flor",
+    "neighborhood": "Vila Mariana",
+    "city": "São Paulo",
+    "state": "SP",
+    "zip": "04128-050"
+}
+```
+
+Status 404 para CEP não encontrado
+
+```json
+{
+    "error": "CEP não encontrado"
+}
+```

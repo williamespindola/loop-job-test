@@ -18,6 +18,7 @@ import {
 const App = () => {
   const [clientList, setClientList] = React.useState([]);
   const [editing, setEditing] = React.useState(false);
+  const [searchAddressError, setSearchAddressError] = React.useState('Preencha o CEP e vamos procurar seu endereço.');
   const [inputs, setInputs] = React.useState({
     name: '',
     phone: '',
@@ -156,6 +157,10 @@ const App = () => {
         state: response.data.state,
         zip: response.data.zip
       }));
+    }).catch(error => {
+      if (error.response.status === 404) {
+        setSearchAddressError(error.response.data.error);
+      }
     });
   };
 
@@ -254,7 +259,7 @@ const App = () => {
                 mask='11111-111'
               />
               <Form.Text className="text-muted">
-                Preencha o CEP e vamos procurar seu endereço.
+                {searchAddressError}
               </Form.Text>
             </Form.Group>
             <Form.Group controlId="userForm.Address">
