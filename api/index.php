@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 define('DB_HOST','0.0.0.0');
-define('DB_NAME','sigchopp');
+define('DB_NAME','loop_client');
 define('DB_USERNAME','user');
 define('DB_PASSWORD','pass');
 date_default_timezone_set('America/Sao_Paulo');

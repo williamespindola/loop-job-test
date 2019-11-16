@@ -93,6 +93,9 @@ server {
 }
 ```
 
+Crie um banco de dados usando o schema que esta em doc/loop_client.sql
+e configure as credênciais em api/index.php
+
 ## Credits
 
 - [William][link-author]
