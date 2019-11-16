@@ -9,6 +9,7 @@ define('DB_PASSWORD','pass');
 date_default_timezone_set('America/Sao_Paulo');
 
 use Doctrine\DBAL\Driver\Connection;
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -18,6 +19,7 @@ use Loop\Client\Http\Action\GetClients;
 use Loop\Client\Http\Action\PostClients;
 use Loop\Client\Http\Action\PutClients;
 use Loop\Client\Http\Action\DeleteClients;
+use Loop\Client\Http\Action\SearchAddressClients;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -53,6 +55,10 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 $connection->getWrappedConnection()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
 $app->get('/clients', new GetClients($connection));
+$app->get(
+    '/search-address/{cep}',
+    new SearchAddressClients($connection, new Client(['base_uri' => 'https://viacep.com.br']))
+);
 $app->post('/clients', new PostClients($connection));
 $app->put('/clients/{uuid}', new PutClients($connection));
 $app->delete('/clients/{uuid}', new DeleteClients($connection));
@@ -62,6 +68,23 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 });
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+
+$customErrorHandler = function (
+    Request $request,
+    Throwable $exception,
+    bool $displayErrorDetails,
+    bool $logErrors,
+    bool $logErrorDetails
+) use ($app) {
+$payload = ['error' => $exception->getMessage()];
+$response = $app->getResponseFactory()->createResponse();
+$response->getBody()
+         ->write(json_encode($payload, JSON_UNESCAPED_UNICODE));
+return $response->withStatus($exception->getCode())
+                ->withHeader('Content-Type', 'application/json');
+};
+
+$errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);

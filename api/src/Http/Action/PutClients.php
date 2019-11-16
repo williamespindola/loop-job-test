@@ -43,6 +43,10 @@ final class PutClients
               ->key('birth_date', v::stringType()->notEmpty())
               ->key('phone', v::stringType()->notEmpty())
               ->key('address', v::stringType()->notEmpty())
+              ->key('neighborhood', v::stringType()->notEmpty())
+              ->key('city', v::stringType()->notEmpty())
+              ->key('state', v::stringType()->notEmpty())
+              ->key('zip', v::stringType()->notEmpty())
               ->assert($inputData);
         } catch (NestedValidationException $exception) {
             throw new HttpBadRequestException($request, $exception->getFullMessage());
@@ -65,6 +69,11 @@ final class PutClients
         $client['phone'] = str_replace(['(', ')', '-', ' '], '', $inputData['phone']);
         $client['birth_date'] = implode('-', array_reverse(explode('/', $inputData['birth_date'])));
         $client['address'] = $inputData['address'];
+        $client['neighborhood'] = $inputData['neighborhood'];
+        $client['city'] = $inputData['city'];
+        $client['state'] = $inputData['state'];
+        $client['zip'] = str_replace('-', '', $inputData['zip']);
+        $client['complement'] = str_replace('-', '', $inputData['complement']);
 
         try {
             $this->connection->update('client', $client, ['uuid' => $uuid]);

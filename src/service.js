@@ -8,4 +8,5 @@ export const getClients = () => instance.get(`/clients`);
 export const postClients = data => instance.post(`/clients`, data);
 export const putClients = (uuid, data) => instance.put(`/clients/${uuid}`, data);
 export const deleteClients = uuid => instance.delete(`/clients/${uuid}`);
+export const searchAddress = cep => instance.get(`/search-address/${cep}`);
 

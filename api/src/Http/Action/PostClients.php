@@ -38,6 +38,10 @@ final class PostClients
               ->key('birth_date', v::stringType()->notEmpty())
               ->key('phone', v::stringType()->notEmpty())
               ->key('address', v::stringType()->notEmpty())
+              ->key('neighborhood', v::stringType()->notEmpty())
+              ->key('city', v::stringType()->notEmpty())
+              ->key('state', v::stringType()->notEmpty())
+              ->key('zip', v::stringType()->notEmpty())
               ->assert($inputData);
         } catch (NestedValidationException $exception) {
             throw new HttpBadRequestException($request, $exception->getFullMessage());
@@ -51,7 +55,11 @@ final class PostClients
                 'name' => $inputData['name'],
                 'phone' => str_replace(['(', ')', '-', ' '], '', $inputData['phone']),
                 'birth_date' => implode('-', array_reverse(explode('/', $inputData['birth_date']))),
-                'address' => $inputData['address']
+                'address' => $inputData['address'],
+                'neighborhood' => $inputData['neighborhood'],
+                'city' => $inputData['city'],
+                'state' => $inputData['state'],
+                'zip' => str_replace('-', '', $inputData['zip'])
             ]);
         } catch (DBALException $exception) {
             throw new HttpBadRequestException($request, $exception->getMessage());

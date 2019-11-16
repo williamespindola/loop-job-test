@@ -11,7 +11,8 @@ import {
   getClients,
   postClients,
   putClients,
-  deleteClients
+  deleteClients,
+  searchAddress
 } from './service';
 
 const App = () => {
@@ -21,7 +22,12 @@ const App = () => {
     name: '',
     phone: '',
     birth_date: '',
-    address: ''
+    address: '',
+    neighborhood: '',
+    city: '',
+    state: '',
+    zip: '',
+    complement: ''
   });
   const [modal, toggleModal] = React.useState(false);
 
@@ -31,6 +37,11 @@ const App = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
+
+    if (formValidation(inputs) !== true) {
+      alert(`Os campos: ${inputs.map(input => input.key()).join(', ')}são obrigatórios`);
+    }
+
     if (editing) {
       putClients(inputs.uuid, inputs).then(response => {
         alert('Cliente editado com sucesso');
@@ -40,7 +51,12 @@ const App = () => {
           name: '',
           phone: '',
           birth_date: '',
-          address: ''
+          address: '',
+          neighborhood: '',
+          city: '',
+          state: '',
+          zip: '',
+          complement: ''
         });
         getClients().then(response => setClientList(response.data));
       });
@@ -55,9 +71,38 @@ const App = () => {
         name: '',
         phone: '',
         birth_date: '',
-        address: ''
+        address: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        zip: '',
+        complement: ''
       });
+      getClients().then(response => setClientList(response.data));
     });
+  };
+
+  const formValidation = fields => {
+    const required = [
+      'name',
+      'phone',
+      'birth_date',
+      'address',
+      'neighborhood',
+      'city',
+      'state',
+      'zip'
+    ];
+
+    const validation = required.filter(
+      field => fields[field] === null || fields[field] === ''
+    );
+
+    if (validation.length > 0) {
+      return validation;
+    }
+
+    return true;
   };
 
   const handleChange = event => {
@@ -79,6 +124,9 @@ const App = () => {
 
   const editClient = client => {
     client.birth_date = client.birth_date.split('/').reverse().join('-');
+    if (client.complement === null) {
+      client.complement = '';
+    }
     setInputs(client);
     setEditing(true);
     toggleModal(true)
@@ -91,6 +139,24 @@ const App = () => {
         getClients().then(response => setClientList(response.data));
       });
     }
+  };
+
+  const handleSearchAddress = event => {
+    event.persist();
+    if (event.target.value.replace(/\D/g,'').length < 8) {
+      return null
+    }
+
+    searchAddress(event.target.value).then(response => {
+      setInputs(inputs => ({
+        ...inputs,
+        address: response.data.address,
+        neighborhood: response.data.neighborhood,
+        city: response.data.city,
+        state: response.data.state,
+        zip: response.data.zip
+      }));
+    });
   };
 
   return (
@@ -120,7 +186,7 @@ const App = () => {
               <td>{client.name}</td>
               <td>{formatPhoneNumber(client.phone)}</td>
               <td>{client.birth_date}</td>
-              <td>{client.address}</td>
+              <td>{`${client.address} - ${client.neighborhood}, ${client.city} - ${client.state}, ${client.zip}`}</td>
               <td>
                 <button className="btn btn-primary btn-sm mx-2"
                   onClick={() => editClient(client)}>
@@ -177,12 +243,65 @@ const App = () => {
                 required
               />
             </Form.Group>
+            <Form.Group controlId="userForm.Cep">
+              <Form.Label>Cep</Form.Label>
+              <MaskedFormControl
+                name="zip"
+                type="text"
+                onChange={handleSearchAddress}
+                value={inputs.zip}
+                required
+                mask='11111-111'
+              />
+              <Form.Text className="text-muted">
+                Preencha o CEP e vamos procurar seu endereço.
+              </Form.Text>
+            </Form.Group>
             <Form.Group controlId="userForm.Address">
               <Form.Label>Endereço</Form.Label>
               <Form.Control
                 name="address"
                 type="text"
                 value={inputs.address}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="userForm.Complement">
+              <Form.Label>Complemento</Form.Label>
+              <Form.Control
+                name="complement"
+                type="text"
+                value={inputs.complement}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="userForm.Neighborhood">
+              <Form.Label>Bairro</Form.Label>
+              <Form.Control
+                name="neighborhood"
+                type="text"
+                value={inputs.neighborhood}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="userForm.City">
+              <Form.Label>Cidade</Form.Label>
+              <Form.Control
+                name="city"
+                type="text"
+                value={inputs.city}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="userForm.State">
+              <Form.Label>UF (Estado)</Form.Label>
+              <Form.Control
+                name="state"
+                type="text"
+                value={inputs.state}
                 onChange={handleChange}
                 required
               />
